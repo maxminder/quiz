@@ -5,68 +5,131 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>公共管理导论 - 随机抽题自测</title>
     <style>
-        body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background-color: #f4f7f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { background: white; width: 90%; max-width: 600px; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; border-top: 5px solid #007bff; }
-        h1 { color: #333; font-size: 1.5rem; margin-bottom: 30px; }
-        #question-box { min-height: 120px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
-        #question-text { font-size: 1.25rem; color: #1a1a1a; line-height: 1.6; font-weight: bold; }
-        #answer-box { background: #f0f7ff; padding: 20px; border-radius: 10px; color: #444; text-align: left; margin-bottom: 30px; display: none; line-height: 1.8; border-left: 4px solid #007bff; }
-        .btn-group { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
-        button { border: none; padding: 12px 28px; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; font-weight: 500; }
-        .btn-next { background-color: #007bff; color: white; }
-        .btn-next:hover { background-color: #0056b3; transform: translateY(-2px); }
-        .btn-show { background-color: #6c757d; color: white; }
-        .btn-show:hover { background-color: #5a6268; }
-        .footer { margin-top: 30px; font-size: 0.85rem; color: #999; }
+        :root { --primary-color: #1a73e8; --bg-color: #f8f9fa; }
+        body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; width: 90%; max-width: 600px; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); text-align: center; }
+        .header { margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 15px; }
+        h1 { color: var(--primary-color); font-size: 1.4rem; margin: 0; }
+        #chapter-info { color: #666; font-size: 0.9rem; margin-top: 10px; }
+        #question-display { min-height: 150px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #222; line-height: 1.6; font-weight: 600; margin: 20px 0; padding: 0 10px; }
+        .btn-next { background-color: var(--primary-color); color: white; border: none; padding: 15px 40px; border-radius: 10px; font-size: 1.1rem; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 6px rgba(26,115,232,0.2); }
+        .btn-next:hover { background-color: #1557b0; transform: translateY(-2px); }
+        .btn-next:active { transform: translateY(0); }
+        .footer { margin-top: 30px; font-size: 0.8rem; color: #bbb; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>📝 公共管理导论自测</h1>
+<div class="card">
+    <div class="header">
+        <h1>🗳️ 公管导论随机抽题</h1>
+        <div id="chapter-info">点击下方按钮开始自测</div>
+    </div>
     
-    <div id="question-box">
-        <div id="question-text">准备好挑战了吗？点击下方按钮开始抽题。</div>
-    </div>
+    <div id="question-display">准备好了吗？</div>
 
-    <div id="answer-box" id="answer-text"></div>
+    <button class="btn-next" onclick="drawQuestion()">抽取题目</button>
 
-    <div class="btns">
-        <button class="btn-show" onclick="toggleAnswer()">查看/隐藏答案</button>
-        <button class="btn-next" onclick="getRandomQuestion()">随机下一题</button>
-    </div>
-
-    <div class="footer">题目范围：第一章 至 第十章</div>
+    <div class="footer">共计 78 道考题 | 覆盖 1-10 章</div>
 </div>
 
 <script>
-    // 题库数据：题目与答案对应
-    const qaData = [
-        { q: "如何理解公共管理的含义? (P5)", a: "公共管理是社会公共组织通过观念和手段创新，为增进公共利益及社会协调发展，对日益多样复杂的公共事务及公共组织自身进行调节和控制的活动。" },
-        { q: "公共管理与行政管理的不同? (P9)", a: "1.管理理念不同；2.管理主体不同；3.管理方法不同；4.管理目的不同；5.与外部环境关系不同。" },
-        { q: "公共物品理论的主要内容是什么? (P6)", a: "产品分为私人物品和公共物品。公共物品显著特征：效用的不可分割性、消费的非竞争性和收益的非排他性。" },
-        { q: "管理层次与管理幅度的关系? (P39)", a: "通常成反比例关系：层次越多，幅度越小；层次越少，幅度越宽。" },
-        { q: "中国公务员的定义要点是什么? (P92)", a: "1.依法履行公职；2.纳入国家行政编制；3.由国家财政负担工资福利。" },
-        { q: "什么是电子政务? (P152)", a: "政务机构运用现代信息技术，打破原有组织机构界限，优化工作流程，办理公务、管理政务、提供公共服务的一种模式。" },
-        { q: "应急管理的“一案三制”指什么? (P159)", a: "指应急预案、应急管理体制、应急管理机制和应急管理法制。" },
-        { q: "新公共管理运动的主要经验? (P168)", a: "引入市场机制、加强基层自治、强化专门组织和技术支持、顶层设计和采取柔性治理。" },
-        { q: "中央与地方关系的实质是什么? (P61)", a: "整体利益与局部利益，即国家利益与地方利益的关系。" },
-        { q: "如何理解公共政策的本质? (P109)", a: "1.体现统治阶级的意志和利益；2.服务于经济社会发展；3.各种利益关系的调节器。" }
-        // 你可以继续按照这个格式在这个数组里添加更多题目
+    const questions = [
+        // 第一章
+        {c: "第一章", q: "如何理解公共管理的含义?（P5）"},
+        {c: "第一章", q: "公共管理与行政管理有什么不同?（P9）"},
+        {c: "第一章", q: "公共物品理论的主要内容是什么?（P6）"},
+        {c: "第一章", q: "如何理解公共管理理论诞生的时代背景?（P13）"},
+        {c: "第一章", q: "公共管理范式转换的现实依据是什么?（P11）"},
+        {c: "第一章", q: "为什么要建设中国特色的公共管理学? (P16,P18)"},
+        // 第二章
+        {c: "第二章", q: "何谓公共管理职能?（P20）"},
+        {c: "第二章", q: "如何理解公共管理职能是历史的、社会的范畴?（P20）"},
+        {c: "第二章", q: "怎样理解公共管理职能体系?（P21，P22）"},
+        {c: "第二章", q: "什么是公共管理的职能转变?（P24）"},
+        {c: "第二章", q: "公共管理职能转变的影响因素有哪些?（P24）"},
+        {c: "第二章", q: "什么是公共管理职能的社会化?（P28）"},
+        {c: "第二章", q: "什么是公共管理职能的市场化?（P29）"},
+        {c: "第二章", q: "试述政府职能转变的主要趋势。（P35）"},
+        // 第三章
+        {c: "第三章", q: "我国的行政组织包括哪些机构? (P38)"},
+        {c: "第三章", q: "行政组织有哪些类型? (P38)"},
+        {c: "第三章", q: "什么是行政组织的纵向结构和横向结构?（P39）"},
+        {c: "第三章", q: "管理层次与管理幅度之间是什么关系?（P39 P40）"},
+        {c: "第三章", q: "什么是准行政组织?（P41）"},
+        {c: "第三章", q: "事业单位有哪些特征?（P42）"},
+        {c: "第三章", q: "事业单位怎么分类? (P43 P44)"},
+        {c: "第三章", q: "什么是社会组织?（P51）"},
+        {c: "第三章", q: "社会组织分哪几类?（P47）"},
+        // 第四章
+        {c: "第四章", q: "如何理解中央政府的法律地位?（P53）"},
+        {c: "第四章", q: "我国中央和地方政府的机构有几种类型?（P56）"},
+        {c: "第四章", q: "我国的政府管理体制主要有哪些?（P50 P60）"},
+        {c: "第四章", q: "中央与地方关系的实质是什么?（P61）"},
+        {c: "第四章", q: "垂直管理体制与属地管理体制有什么区别?（P60 P63）"},
+        {c: "第四章", q: "地方政府间的关系有哪些形式?（P62 P63）"},
+        {c: "第四章", q: "事业单位管理的主要内容和形式是什么?（P64）"},
+        {c: "第四章", q: "我国社会组织的管理体制是什么?（P66 P69）"},
+        // 第五章
+        {c: "第五章", q: "什么是领导? 领导的职能有哪些?（P85）"},
+        {c: "第五章", q: "领导的个体素质包括哪些?（P72）"},
+        {c: "第五章", q: "领导群体的素质结构指什么?（P73）"},
+        {c: "第五章", q: "行政领导活动的特点是什么?（P75）"},
+        {c: "第五章", q: "行政领导者的特点是什么?（P75）"},
+        {c: "第五章", q: "行政领导制度有哪些?（P76 P77）"},
+        {c: "第五章", q: "如何理解领导艺术?（P79）"},
+        {c: "第五章", q: "什么是法人治理结构?（P81）"},
+        // 第六章
+        {c: "第六章", q: "公共部门人力资源管理的特征是什么?（P89 P105）"},
+        {c: "第六章", q: "传统的公共部门人事管理的局限性表现在哪些方面?（P89）"},
+        {c: "第六章", q: "西方公务员制度有什么特点?（P91）"},
+        {c: "第六章", q: "如何理解中国的公务员定义?（P92）"},
+        {c: "第六章", q: "中国公务员制度有什么特点?（P92）"},
+        {c: "第六章", q: "什么是职务与职级并行的制度?（P93）"},
+        {c: "第六章", q: "事业单位的“全员聘用制”主要内容是什么?（P100）"},
+        {c: "第六章", q: "事业单位的岗位设置特点是什么?（P98）"},
+        {c: "第六章", q: "简述注册志愿者管理的要点。（P103）"},
+        // 第七章
+        {c: "第七章", q: "公共政策的本质是什么?（P109）"},
+        {c: "第七章", q: "公共政策制定的主体有哪些?（P112）"},
+        {c: "第七章", q: "如何理解公共政策制定的影响因素?（P114）"},
+        {c: "第七章", q: "公共政策制定的基本程序是怎样的?（P114）"},
+        {c: "第七章", q: "公共政策执行的主要方法有哪些?（P115）"},
+        {c: "第七章", q: "公共政策评估的内容有哪些?（P118）"},
+        {c: "第七章", q: "公共政策监控的作用有哪些?（P120）"},
+        // 第八章
+        {c: "第八章", q: "简述公共财政管理在公共管理中的地位。（P127 P142）"},
+        {c: "第八章", q: "如何理解深化财税体制改革的重大意义?（P129）"},
+        {c: "第八章", q: "试述深化财税体制改革的主要任务。（P129）"},
+        {c: "第八章", q: "公共预算管理的主要内容是什么?（P129 P142）"},
+        {c: "第八章", q: "公共支出管理的主要内容是什么?（P142）"},
+        // 第九章
+        {c: "第九章", q: "如何认识公共管理方法的地位和作用?（P144）"},
+        {c: "第九章", q: "公共管理的一般方法有哪些?（P145）"},
+        {c: "第九章", q: "如何认识绩效管理的特点?（P148）"},
+        {c: "第九章", q: "公共部门绩效管理的主要内容有哪些?（P150）"},
+        {c: "第九章", q: "什么是电子政务?（P152）"},
+        {c: "第九章", q: "公共部门管理信息化的主要功能有哪些?（P153）"},
+        {c: "第九章", q: "信息化管理应用系统的主要内容有哪些?（P154）"},
+        {c: "第九章", q: "应急管理的主要内容是什么?（P157）"},
+        {c: "第九章", q: "如何理解我国以“一案三制”为核心的应急管理体系?（P159 P160）"},
+        {c: "第九章", q: "我国《突发事件应对法》确定的应急管理体制是什么?（P159 P160）"},
+        // 第十章
+        {c: "第十章", q: "公共管理改革的一般动因有哪些?（P162）"},
+        {c: "第十章", q: "新公共管理运动的主要内容是什么?（P187）"},
+        {c: "第十章", q: "新公共管理运动的主要经验有哪些?（P168 P187）"},
+        {c: "第十章", q: "简要叙述中国行政体制改革的历程。（P170）"},
+        {c: "第十章", q: "当前我国行政体制改革的重点是什么?（P171）"},
+        {c: "第十章", q: "为什么说中国的非政府公共组织改革是行政体制改革的组成部分? (P182)"},
+        {c: "第十章", q: "我国事业单位改革的方向和主要内容是什么? (P183)"},
+        {c: "第十章", q: "我国社会组织改革的方向和主要内容是什么? (P183)"}
     ];
 
-    function getRandomQuestion() {
-        const randomIndex = Math.floor(Math.random() * qaData.length);
-        const item = qaData[randomIndex];
-        document.getElementById('question-text').innerText = item.q;
-        document.getElementById('answer-box').innerText = item.a;
-        document.getElementById('answer-box').style.display = 'none';
-    }
-
-    function toggleAnswer() {
-        const box = document.getElementById('answer-box');
-        if (box.innerText === "") return;
-        box.style.display = (box.style.display === 'none' || box.style.display === '') ? 'block' : 'none';
+    function drawQuestion() {
+        const randomIndex = Math.floor(Math.random() * questions.length);
+        const item = questions[randomIndex];
+        document.getElementById('question-display').innerText = item.q;
+        document.getElementById('chapter-info').innerText = "当前章节：" + item.c;
     }
 </script>
 
