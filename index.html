@@ -3,135 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>公共管理导论 - 随机抽题自测</title>
+    <title>公共管理导论 - 随机听题自测系统</title>
     <style>
-        :root { --primary-color: #1a73e8; --bg-color: #f8f9fa; }
-        body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .card { background: white; width: 90%; max-width: 600px; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); text-align: center; }
-        .header { margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 15px; }
-        h1 { color: var(--primary-color); font-size: 1.4rem; margin: 0; }
-        #chapter-info { color: #666; font-size: 0.9rem; margin-top: 10px; }
-        #question-display { min-height: 150px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #222; line-height: 1.6; font-weight: 600; margin: 20px 0; padding: 0 10px; }
-        .btn-next { background-color: var(--primary-color); color: white; border: none; padding: 15px 40px; border-radius: 10px; font-size: 1.1rem; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 6px rgba(26,115,232,0.2); }
-        .btn-next:hover { background-color: #1557b0; transform: translateY(-2px); }
-        .btn-next:active { transform: translateY(0); }
+        :root { --primary: #1a73e8; --bg: #f8f9fa; }
+        body { font-family: -apple-system, "PingFang SC", sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; width: 90%; max-width: 550px; padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.06); text-align: center; }
+        h1 { color: var(--primary); font-size: 1.4rem; margin-bottom: 10px; }
+        .setup-sec { margin-bottom: 25px; display: flex; justify-content: center; gap: 15px; font-size: 0.9rem; color: #666; align-items: center; }
+        select { padding: 6px; border-radius: 8px; border: 1px solid #ddd; outline: none; }
+        #q-display { min-height: 160px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #222; line-height: 1.6; font-weight: 600; margin: 20px 0; border: 2px dashed #eef1f6; border-radius: 15px; padding: 20px; }
+        .btn-next { background: var(--primary); color: white; border: none; padding: 16px 45px; border-radius: 12px; font-size: 1.1rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(26,115,232,0.3); width: 100%; }
+        .btn-next:active { transform: scale(0.98); }
+        .voice-ctrl { margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem; color: #888; }
         .footer { margin-top: 30px; font-size: 0.8rem; color: #bbb; }
+        input[type="checkbox"] { cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <div class="header">
-        <h1>🗳️ 公管导论随机抽题</h1>
-        <div id="chapter-info">点击下方按钮开始自测</div>
-    </div>
+    <h1>📝 公管导论随机听题</h1>
     
-    <div id="question-display">准备好了吗？</div>
+    <div class="setup-sec">
+        章节：
+        <select id="chapter-sel" onchange="initPool()">
+            <option value="all">全部 (1-10章)</option>
+            <option value="1">第一章</option><option value="2">第二章</option>
+            <option value="3">第三章</option><option value="4">第四章</option>
+            <option value="5">第五章</option><option value="6">第六章</option>
+            <option value="7">第七章</option><option value="8">第八章</option>
+            <option value="9">第九章</option><option value="10">第十章</option>
+        </select>
+    </div>
 
-    <button class="btn-next" onclick="drawQuestion()">抽取题目</button>
+    <div id="q-display">点击下方按钮开始</div>
 
-    <div class="footer">共计 78 道考题 | 覆盖 1-10 章</div>
+    <button class="btn-next" onclick="draw()">下一题</button>
+
+    <div class="voice-ctrl">
+        <input type="checkbox" id="voice-on" checked> 
+        <label for="voice-on">开启自动朗读题目</label>
+    </div>
+
+    <div class="footer" id="stat">共计 78 道题目</div>
 </div>
 
 <script>
     const questions = [
-        // 第一章
-        {c: "第一章", q: "如何理解公共管理的含义?（P5）"},
-        {c: "第一章", q: "公共管理与行政管理有什么不同?（P9）"},
-        {c: "第一章", q: "公共物品理论的主要内容是什么?（P6）"},
-        {c: "第一章", q: "如何理解公共管理理论诞生的时代背景?（P13）"},
-        {c: "第一章", q: "公共管理范式转换的现实依据是什么?（P11）"},
-        {c: "第一章", q: "为什么要建设中国特色的公共管理学? (P16,P18)"},
-        // 第二章
-        {c: "第二章", q: "何谓公共管理职能?（P20）"},
-        {c: "第二章", q: "如何理解公共管理职能是历史的、社会的范畴?（P20）"},
-        {c: "第二章", q: "怎样理解公共管理职能体系?（P21，P22）"},
-        {c: "第二章", q: "什么是公共管理的职能转变?（P24）"},
-        {c: "第二章", q: "公共管理职能转变的影响因素有哪些?（P24）"},
-        {c: "第二章", q: "什么是公共管理职能的社会化?（P28）"},
-        {c: "第二章", q: "什么是公共管理职能的市场化?（P29）"},
-        {c: "第二章", q: "试述政府职能转变的主要趋势。（P35）"},
-        // 第三章
-        {c: "第三章", q: "我国的行政组织包括哪些机构? (P38)"},
-        {c: "第三章", q: "行政组织有哪些类型? (P38)"},
-        {c: "第三章", q: "什么是行政组织的纵向结构和横向结构?（P39）"},
-        {c: "第三章", q: "管理层次与管理幅度之间是什么关系?（P39 P40）"},
-        {c: "第三章", q: "什么是准行政组织?（P41）"},
-        {c: "第三章", q: "事业单位有哪些特征?（P42）"},
-        {c: "第三章", q: "事业单位怎么分类? (P43 P44)"},
-        {c: "第三章", q: "什么是社会组织?（P51）"},
-        {c: "第三章", q: "社会组织分哪几类?（P47）"},
-        // 第四章
-        {c: "第四章", q: "如何理解中央政府的法律地位?（P53）"},
-        {c: "第四章", q: "我国中央和地方政府的机构有几种类型?（P56）"},
-        {c: "第四章", q: "我国的政府管理体制主要有哪些?（P50 P60）"},
-        {c: "第四章", q: "中央与地方关系的实质是什么?（P61）"},
-        {c: "第四章", q: "垂直管理体制与属地管理体制有什么区别?（P60 P63）"},
-        {c: "第四章", q: "地方政府间的关系有哪些形式?（P62 P63）"},
-        {c: "第四章", q: "事业单位管理的主要内容和形式是什么?（P64）"},
-        {c: "第四章", q: "我国社会组织的管理体制是什么?（P66 P69）"},
-        // 第五章
-        {c: "第五章", q: "什么是领导? 领导的职能有哪些?（P85）"},
-        {c: "第五章", q: "领导的个体素质包括哪些?（P72）"},
-        {c: "第五章", q: "领导群体的素质结构指什么?（P73）"},
-        {c: "第五章", q: "行政领导活动的特点是什么?（P75）"},
-        {c: "第五章", q: "行政领导者的特点是什么?（P75）"},
-        {c: "第五章", q: "行政领导制度有哪些?（P76 P77）"},
-        {c: "第五章", q: "如何理解领导艺术?（P79）"},
-        {c: "第五章", q: "什么是法人治理结构?（P81）"},
-        // 第六章
-        {c: "第六章", q: "公共部门人力资源管理的特征是什么?（P89 P105）"},
-        {c: "第六章", q: "传统的公共部门人事管理的局限性表现在哪些方面?（P89）"},
-        {c: "第六章", q: "西方公务员制度有什么特点?（P91）"},
-        {c: "第六章", q: "如何理解中国的公务员定义?（P92）"},
-        {c: "第六章", q: "中国公务员制度有什么特点?（P92）"},
-        {c: "第六章", q: "什么是职务与职级并行的制度?（P93）"},
-        {c: "第六章", q: "事业单位的“全员聘用制”主要内容是什么?（P100）"},
-        {c: "第六章", q: "事业单位的岗位设置特点是什么?（P98）"},
-        {c: "第六章", q: "简述注册志愿者管理的要点。（P103）"},
-        // 第七章
-        {c: "第七章", q: "公共政策的本质是什么?（P109）"},
-        {c: "第七章", q: "公共政策制定的主体有哪些?（P112）"},
-        {c: "第七章", q: "如何理解公共政策制定的影响因素?（P114）"},
-        {c: "第七章", q: "公共政策制定的基本程序是怎样的?（P114）"},
-        {c: "第七章", q: "公共政策执行的主要方法有哪些?（P115）"},
-        {c: "第七章", q: "公共政策评估的内容有哪些?（P118）"},
-        {c: "第七章", q: "公共政策监控的作用有哪些?（P120）"},
-        // 第八章
-        {c: "第八章", q: "简述公共财政管理在公共管理中的地位。（P127 P142）"},
-        {c: "第八章", q: "如何理解深化财税体制改革的重大意义?（P129）"},
-        {c: "第八章", q: "试述深化财税体制改革的主要任务。（P129）"},
-        {c: "第八章", q: "公共预算管理的主要内容是什么?（P129 P142）"},
-        {c: "第八章", q: "公共支出管理的主要内容是什么?（P142）"},
-        // 第九章
-        {c: "第九章", q: "如何认识公共管理方法的地位和作用?（P144）"},
-        {c: "第九章", q: "公共管理的一般方法有哪些?（P145）"},
-        {c: "第九章", q: "如何认识绩效管理的特点?（P148）"},
-        {c: "第九章", q: "公共部门绩效管理的主要内容有哪些?（P150）"},
-        {c: "第九章", q: "什么是电子政务?（P152）"},
-        {c: "第九章", q: "公共部门管理信息化的主要功能有哪些?（P153）"},
-        {c: "第九章", q: "信息化管理应用系统的主要内容有哪些?（P154）"},
-        {c: "第九章", q: "应急管理的主要内容是什么?（P157）"},
-        {c: "第九章", q: "如何理解我国以“一案三制”为核心的应急管理体系?（P159 P160）"},
-        {c: "第九章", q: "我国《突发事件应对法》确定的应急管理体制是什么?（P159 P160）"},
-        // 第十章
-        {c: "第十章", q: "公共管理改革的一般动因有哪些?（P162）"},
-        {c: "第十章", q: "新公共管理运动的主要内容是什么?（P187）"},
-        {c: "第十章", q: "新公共管理运动的主要经验有哪些?（P168 P187）"},
-        {c: "第十章", q: "简要叙述中国行政体制改革的历程。（P170）"},
-        {c: "第十章", q: "当前我国行政体制改革的重点是什么?（P171）"},
-        {c: "第十章", q: "为什么说中国的非政府公共组织改革是行政体制改革的组成部分? (P182)"},
-        {c: "第十章", q: "我国事业单位改革的方向和主要内容是什么? (P183)"},
-        {c: "第十章", q: "我国社会组织改革的方向和主要内容是什么? (P183)"}
+        {c:1, q:"如何理解公共管理的含义? (P5)"}, {c:1, q:"公共管理与行政管理有什么不同? (P9)"},
+        {c:1, q:"公共物品理论的主要内容是什么? (P6)"}, {c:1, q:"如何理解公共管理理论诞生的时代背景? (P13)"},
+        {c:1, q:"公共管理范式转换的现实依据是什么? (P11)"}, {c:1, q:"为什么要建设中国特色的公共管理学? (P16)"},
+        {c:2, q:"何谓公共管理职能? (P20)"}, {c:2, q:"如何理解公共管理职能是历史的、社会的范畴? (P20)"},
+        {c:2, q:"怎样理解公共管理职能体系? (P21)"}, {c:2, q:"什么是公共管理的职能转变? (P24)"},
+        {c:2, q:"公共管理职能转变的影响因素有哪些? (P24)"}, {c:2, q:"什么是公共管理职能的社会化? (P28)"},
+        {c:2, q:"什么是公共管理职能的市场化? (P29)"}, {c:2, q:"试述政府职能转变的主要趋势。 (P35)"},
+        {c:3, q:"我国的行政组织包括哪些机构? (P38)"}, {c:3, q:"行政组织有哪些类型? (P38)"},
+        {c:3, q:"什么是行政组织的纵向结构和横向结构? (P39)"}, {c:3, q:"管理层次与管理幅度之间是什么关系? (P39)"},
+        {c:3, q:"什么是准行政组织? (P41)"}, {c:3, q:"事业单位有哪些特征? (P42)"},
+        {c:3, q:"事业单位怎么分类? (P43)"}, {c:3, q:"什么是社会组织? (P51)"},
+        {c:3, q:"社会组织分哪几类? (P47)"}, {c:4, q:"如何理解中央政府的法律地位? (P53)"},
+        {c:4, q:"我国中央和地方政府的机构有几种类型? (P56)"}, {c:4, q:"我国的政府管理体制主要有哪些? (P50)"},
+        {c:4, q:"中央与地方关系的实质是什么? (P61)"}, {c:4, q:"垂直管理体制与属地管理体制有什么区别? (P60)"},
+        {c:4, q:"地方政府间的关系有哪些形式? (P62)"}, {c:4, q:"事业单位管理的主要内容和形式是什么? (P64)"},
+        {c:4, q:"我国社会组织的管理体制是什么? (P66)"}, {c:5, q:"什么是领导? 领导的职能有哪些? (P85)"},
+        {c:5, q:"领导的个体素质包括哪些? (P72)"}, {c:5, q:"领导群体的素质结构指什么? (P73)"},
+        {c:5, q:"行政领导活动的特点是什么? (P75)"}, {c:5, q:"行政领导者的特点是什么? (P75)"},
+        {c:5, q:"行政领导制度有哪些? (P76)"}, {c:5, q:"如何理解领导艺术? (P79)"},
+        {c:5, q:"什么是法人治理结构? (P81)"}, {c:6, q:"公共部门人力资源管理的特征是什么? (P89)"},
+        {c:6, q:"传统的公共部门人事管理的局限性表项? (P89)"}, {c:6, q:"西方公务员制度有什么特点? (P91)"},
+        {c:6, q:"如何理解中国的公务员定义? (P92)"}, {c:6, q:"中国公务员制度有什么特点? (P92)"},
+        {c:6, q:"什么是职务与职级并行的制度? (P93)"}, {c:6, q:"事业单位的“全员聘用制”主要内容? (P100)"},
+        {c:6, q:"事业单位的岗位设置特点是什么? (P98)"}, {c:6, q:"简述注册志愿者管理的要点。 (P103)"},
+        {c:7, q:"公共政策的本质是什么? (P109)"}, {c:7, q:"公共政策制定的主体有哪些? (P112)"},
+        {c:7, q:"如何理解公共政策制定的影响因素? (P114)"}, {c:7, q:"公共政策制定的基本程序是怎样的? (P114)"},
+        {c:7, q:"公共政策执行的主要方法有哪些? (P115)"}, {c:7, q:"公共政策评估的内容有哪些? (P118)"},
+        {c:7, q:"公共政策监控的作用有哪些? (P120)"}, {c:8, q:"简述公共财政管理在公共管理中的地位? (P127)"},
+        {c:8, q:"如何理解深化财税体制改革的重大意义? (P129)"}, {c:8, q:"试述深化财税体制改革的主要任务? (P129)"},
+        {c:8, q:"公共预算管理的主要内容是什么? (P129)"}, {c:8, q:"公共支出管理的主要内容是什么? (P142)"},
+        {c:9, q:"如何认识公共管理方法的地位和作用? (P144)"}, {c:9, q:"公共管理的一般方法有哪些? (P145)"},
+        {c:9, q:"如何认识绩效管理的特点? (P148)"}, {c:9, q:"公共部门绩效管理的主要内容有哪些? (P150)"},
+        {c:9, q:"什么是电子政务? (P152)"}, {c:9, q:"公共部门管理信息化的主要功能? (P153)"},
+        {c:9, q:"信息化管理应用系统的主要内容? (P154)"}, {c:9, q:"应急管理的主要内容是什么? (P157)"},
+        {c:9, q:"如何理解我国以“一案三制”为核心的体系? (P159)"}, {c:9, q:"我国《突发事件应对法》确定的体制? (P159)"},
+        {c:10, q:"公共管理改革的一般动因有哪些? (P162)"}, {c:10, q:"新公共管理运动的主要内容是什么? (P187)"},
+        {c:10, q:"新公共管理运动的主要经验有哪些? (P168)"}, {c:10, q:"简要叙述中国行政体制改革的历程。 (P170)"},
+        {c:10, q:"当前我国行政体制改革的重点是什么? (P171)"}, {c:10, q:"为什么说中国非政府组织改革是行政体制改革组成部分? (P182)"},
+        {c:10, q:"我国事业单位改革的方向和主要内容? (P183)"}, {c:10, q:"我国社会组织改革的方向和主要内容? (P183)"}
     ];
 
-    function drawQuestion() {
-        const randomIndex = Math.floor(Math.random() * questions.length);
-        const item = questions[randomIndex];
-        document.getElementById('question-display').innerText = item.q;
-        document.getElementById('chapter-info').innerText = "当前章节：" + item.c;
+    let pool = [];
+    function initPool() {
+        const c = document.getElementById('chapter-sel').value;
+        pool = c === 'all' ? [...questions] : questions.filter(x => x.c == c);
+        document.getElementById('stat').innerText = `已加载第 ${c === 'all' ? '1-10' : c} 章：${pool.length} 题`;
     }
-</script>
 
+    function speak(txt) {
+        if(!document.getElementById('voice-on').checked) return;
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(txt);
+        u.lang = 'zh-CN';
+        u.rate = 0.9;
+        window.speechSynthesis.speak(u);
+    }
+
+    function draw() {
+        if(pool.length === 0) initPool();
+        const item = pool[Math.floor(Math.random() * pool.length)];
+        document.getElementById('q-display').innerText = item.q;
+        speak(item.q.split('（')[0]); // 朗读时去掉括号里的页码
+    }
+
+    initPool();
+</script>
 </body>
 </html>
