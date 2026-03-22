@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公共管理导论 - 随机抽题自测</title>
+    <style>
+        body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background-color: #f4f7f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background: white; width: 90%; max-width: 600px; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; border-top: 5px solid #007bff; }
+        h1 { color: #333; font-size: 1.5rem; margin-bottom: 30px; }
+        #question-box { min-height: 120px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+        #question-text { font-size: 1.25rem; color: #1a1a1a; line-height: 1.6; font-weight: bold; }
+        #answer-box { background: #f0f7ff; padding: 20px; border-radius: 10px; color: #444; text-align: left; margin-bottom: 30px; display: none; line-height: 1.8; border-left: 4px solid #007bff; }
+        .btn-group { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        button { border: none; padding: 12px 28px; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; font-weight: 500; }
+        .btn-next { background-color: #007bff; color: white; }
+        .btn-next:hover { background-color: #0056b3; transform: translateY(-2px); }
+        .btn-show { background-color: #6c757d; color: white; }
+        .btn-show:hover { background-color: #5a6268; }
+        .footer { margin-top: 30px; font-size: 0.85rem; color: #999; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📝 公共管理导论自测</h1>
+    
+    <div id="question-box">
+        <div id="question-text">准备好挑战了吗？点击下方按钮开始抽题。</div>
+    </div>
+
+    <div id="answer-box" id="answer-text"></div>
+
+    <div class="btns">
+        <button class="btn-show" onclick="toggleAnswer()">查看/隐藏答案</button>
+        <button class="btn-next" onclick="getRandomQuestion()">随机下一题</button>
+    </div>
+
+    <div class="footer">题目范围：第一章 至 第十章</div>
+</div>
+
+<script>
+    // 题库数据：题目与答案对应
+    const qaData = [
+        { q: "如何理解公共管理的含义? (P5)", a: "公共管理是社会公共组织通过观念和手段创新，为增进公共利益及社会协调发展，对日益多样复杂的公共事务及公共组织自身进行调节和控制的活动。" },
+        { q: "公共管理与行政管理的不同? (P9)", a: "1.管理理念不同；2.管理主体不同；3.管理方法不同；4.管理目的不同；5.与外部环境关系不同。" },
+        { q: "公共物品理论的主要内容是什么? (P6)", a: "产品分为私人物品和公共物品。公共物品显著特征：效用的不可分割性、消费的非竞争性和收益的非排他性。" },
+        { q: "管理层次与管理幅度的关系? (P39)", a: "通常成反比例关系：层次越多，幅度越小；层次越少，幅度越宽。" },
+        { q: "中国公务员的定义要点是什么? (P92)", a: "1.依法履行公职；2.纳入国家行政编制；3.由国家财政负担工资福利。" },
+        { q: "什么是电子政务? (P152)", a: "政务机构运用现代信息技术，打破原有组织机构界限，优化工作流程，办理公务、管理政务、提供公共服务的一种模式。" },
+        { q: "应急管理的“一案三制”指什么? (P159)", a: "指应急预案、应急管理体制、应急管理机制和应急管理法制。" },
+        { q: "新公共管理运动的主要经验? (P168)", a: "引入市场机制、加强基层自治、强化专门组织和技术支持、顶层设计和采取柔性治理。" },
+        { q: "中央与地方关系的实质是什么? (P61)", a: "整体利益与局部利益，即国家利益与地方利益的关系。" },
+        { q: "如何理解公共政策的本质? (P109)", a: "1.体现统治阶级的意志和利益；2.服务于经济社会发展；3.各种利益关系的调节器。" }
+        // 你可以继续按照这个格式在这个数组里添加更多题目
+    ];
+
+    function getRandomQuestion() {
+        const randomIndex = Math.floor(Math.random() * qaData.length);
+        const item = qaData[randomIndex];
+        document.getElementById('question-text').innerText = item.q;
+        document.getElementById('answer-box').innerText = item.a;
+        document.getElementById('answer-box').style.display = 'none';
+    }
+
+    function toggleAnswer() {
+        const box = document.getElementById('answer-box');
+        if (box.innerText === "") return;
+        box.style.display = (box.style.display === 'none' || box.style.display === '') ? 'block' : 'none';
+    }
+</script>
+
+</body>
+</html>
